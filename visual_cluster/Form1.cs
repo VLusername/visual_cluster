@@ -17,14 +17,39 @@ namespace visual_cluster
             InitializeComponent();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        public void PrintGrid(int[,] grid)
         {
-
+            for (int i = 0; i < grid.GetLength(0); i++)
+            {
+                for (int j = 0; j < grid.GetLength(1); j++)
+                {
+                    this.textBox3.AppendText(grid[i, j].ToString() + "\t");
+                }
+                this.textBox3.AppendText("\r\n");
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            int gridSize = Convert.ToInt32(this.textBox1.Text);
+            double probability = Convert.ToDouble(this.textBox2.Text);
 
+            FindClustersAlgorithm findObj = new FindClustersAlgorithm(gridSize, probability);
+
+            this.PrintGrid(findObj.grid);
+
+            findObj.HoshenKopelmanAlgorithm();
+
+            this.textBox3.AppendText("\r\n");
+            this.PrintGrid(findObj.grid);
+
+            this.textBox3.AppendText("\r\nTotal of found clusters: " + findObj.total_clusters.ToString());
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.textBox3.Clear();
         }
     }
 }
