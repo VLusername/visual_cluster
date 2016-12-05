@@ -31,6 +31,7 @@ namespace visual_cluster
 
         private void button1_Click(object sender, EventArgs e)
         {
+            this.textBox3.Clear();
             int gridSize = Convert.ToInt32(this.textBox1.Text);
             double probability = Convert.ToDouble(this.textBox2.Text);
 
