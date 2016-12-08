@@ -46,7 +46,36 @@ namespace visual_cluster
                 this.richTextBox1.AppendText("\r\n");
             }
             this.richTextBox1.AppendText("\r\n");
-        }     
+        }
+
+        public void Print3DGrid(string clusterColorMark = "")
+        {
+            int[,,] grid = this.findObj.threeDgrid;
+            this.richTextBox1.AppendText("\r\n");
+
+            for (int i = 0; i < grid.GetLength(0); i++)
+            {
+                for (int j = 0; j < grid.GetLength(1); j++)
+                {
+                    for (int k = 0; k < grid.GetLength(2); k++)
+                    {
+                        // TODO: different colors
+
+                        if (clusterColorMark == grid[i, j, k].ToString())
+                        {
+                            this.richTextBox1.AppendText(grid[i, j, k].ToString() + "\t", Color.Blue);
+                        }
+                        else
+                        {
+                            this.richTextBox1.AppendText(grid[i, j, k].ToString() + "\t");
+                        }
+                    }
+                    this.richTextBox1.AppendText("\r\n");
+                }
+                this.richTextBox1.AppendText("\r\n");
+            }
+            this.richTextBox1.AppendText("\r\n");
+        }  
 
         private void DrawGrid()
         {
@@ -146,23 +175,24 @@ namespace visual_cluster
             double probability = Convert.ToDouble(this.probability.Text);
 
             findObj = new FindClustersAlgorithm(gridSize, probability);         
-            findObj.HoshenKopelmanAlgorithm();
-            int totalClusters = findObj.RelabledGrid();          
-            this.percolationClusters = findObj.FindPercolationClusters();
-            //this.PrintGrid();
+            findObj.HoshenKopelmanAlgorithm3D();
+            //int totalClusters = findObj.RelabledGrid();          
+            //this.percolationClusters = findObj.FindPercolationClusters();
+            findObj.Relabled3DGrid();
+            this.Print3DGrid();
                     
-            this.richTextBox1.AppendText("\r\nСlusters total: " + totalClusters.ToString());
-            this.richTextBox1.AppendText("\r\nPercolation clusters");
+            //this.richTextBox1.AppendText("\r\nСlusters total: " + totalClusters.ToString());
+            //this.richTextBox1.AppendText("\r\nPercolation clusters");
 
-            // TODO: try reformat out with {x}
+            //// TODO: try reformat out with {x}
 
-            for (int i = 0; i < this.percolationClusters.Count; i++)
-                if (this.percolationClusters[i] != 0)
-                    this.richTextBox1.AppendText(" #" + this.percolationClusters[i].ToString());
+            //for (int i = 0; i < this.percolationClusters.Count; i++)
+            //    if (this.percolationClusters[i] != 0)
+            //        this.richTextBox1.AppendText(" #" + this.percolationClusters[i].ToString());
 
-            this.richTextBox1.AppendText(": " + this.percolationClusters.Count.ToString());
+            //this.richTextBox1.AppendText(": " + this.percolationClusters.Count.ToString());
 
-            DrawGrid();
+            //DrawGrid();
         }
 
         private void clearButton_Click(object sender, EventArgs e)
