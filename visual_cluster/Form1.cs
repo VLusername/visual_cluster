@@ -10,15 +10,22 @@ using System.Windows.Forms;
 
 namespace visual_cluster
 {
-    public partial class Form1 : Form
+    public partial class clusterForm : Form
     {
-        public Form1()
+        private Graphics paintBox;
+        private FindClustersAlgorithm findObj;
+        private List<int> percolationClusters;
+
+        public clusterForm()
         {
             InitializeComponent();
+            fillButton.Enabled = false;
+            clearButton.Enabled = false;
         }
 
-        public void PrintGrid(int[,] grid, string markCluster = "")
+        public void PrintGrid(string clusterColorMark = "")
         {
+            int[,] grid = this.findObj.grid;
             this.richTextBox1.AppendText("\r\n");
 
             for (int i = 0; i < grid.GetLength(0); i++)
@@ -27,7 +34,7 @@ namespace visual_cluster
                 {
                     // TODO: different colors
 
-                    if (markCluster == grid[i, j].ToString())
+                    if (clusterColorMark == grid[i, j].ToString())
                     {
                         this.richTextBox1.AppendText(grid[i, j].ToString() + "\t", Color.Blue);
                     }
@@ -38,51 +45,134 @@ namespace visual_cluster
                 }
                 this.richTextBox1.AppendText("\r\n");
             }
-        }
+            this.richTextBox1.AppendText("\r\n");
+        }     
 
-        public int FindPercolationClusters(FindClustersAlgorithm obj)
+        private void DrawGrid()
         {
-            int percolationClustersTotal = 0;
-            int[] foundClusters = new int[obj.grid.GetLength(0)];
+            int[,] grid = this.findObj.grid;
 
-            for (int i = 0; i < obj.grid.GetLength(0); i++)
-                for (int j = 0; j < obj.grid.GetLength(0); j++)
+            SolidBrush squareBrush = new SolidBrush(Color.Black);
+            Rectangle cellRect = new Rectangle(0, 0, 0, 0);
+            this.paintBox = this.pictureBox1.CreateGraphics();
+            this.paintBox.Clear(Color.FromArgb(224, 224, 224));
+
+            int squareSizeX = (int)(this.pictureBox1.Width / grid.GetLength(0));
+            int squareSizeY = (int)(this.pictureBox1.Height / grid.GetLength(1));
+
+            for (int i = 0; i < grid.GetLength(0); i++)
+            {
+                for (int j = 0; j < grid.GetLength(1); j++)
                 {
-                    if (obj.grid[0, i] != 0 && foundClusters[obj.grid[0, i]] == 0 && obj.grid[0, i] == obj.grid[obj.grid.GetLength(1) - 1, j])
-                    {
-                        this.PrintGrid(obj.grid, obj.grid[0, i].ToString());
-                        foundClusters[obj.grid[0, i]]++;
-                        percolationClustersTotal++;
-                        break;
-                    }
-                }
+                    if (grid[i, j] != 0)
+                        squareBrush = new SolidBrush(Color.White);
 
-            return percolationClustersTotal;
+                    cellRect = new Rectangle(0 + j * squareSizeX, 0 + i * squareSizeY, squareSizeX - 1, squareSizeY - 1);
+                    this.paintBox.FillRectangle(squareBrush, cellRect);
+
+                    if (this.checkShowNumbers.Checked)
+                        using (Font cellFont = new Font("Jing Jing", (int)(14 * squareSizeX / 35), FontStyle.Regular, GraphicsUnit.Point))
+                        {
+                            StringFormat textFormat = new StringFormat();
+                            textFormat.Alignment = StringAlignment.Center;
+                            textFormat.LineAlignment = StringAlignment.Center;
+
+                            this.paintBox.DrawString(grid[i, j].ToString(), cellFont, Brushes.Black, cellRect, textFormat);
+                        }
+                    squareBrush = new SolidBrush(Color.Black);
+                }
+                if (this.checkSlowMotion.Checked)
+                    System.Threading.Thread.Sleep(50);
+            }
+            squareBrush.Dispose();
+            this.paintBox.Dispose();       
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void fillButton_Click(object sender, EventArgs e)
         {
+            int[,] grid = this.findObj.grid;
+
+            this.paintBox = this.pictureBox1.CreateGraphics();
+            SolidBrush squareBrush = new SolidBrush(Color.CornflowerBlue);
+            Rectangle cellRect = new Rectangle(0, 0, 0, 0);
+
+            int squareSizeX = (int)(this.pictureBox1.Width / grid.GetLength(0));
+            int squareSizeY = (int)(this.pictureBox1.Height / grid.GetLength(1));
+
+            int filledRowCells = 0;
+            for (int i = 0; i < grid.GetLength(0); i++)
+            {
+                filledRowCells = 0;
+                for (int j = 0; j < grid.GetLength(1); j++)
+                    for (int k = 0; k < grid.GetLength(1); k++)
+                        if (grid[0, k] != 0)
+                            if (grid[i, j] == grid[0, k])
+                            {
+                                filledRowCells++;
+                                cellRect = new Rectangle(0 + j * squareSizeX, 0 + i * squareSizeY, squareSizeX - 1, squareSizeY - 1);
+                                this.paintBox.FillRectangle(squareBrush, cellRect);
+
+                                if (this.checkShowNumbers.Checked)
+                                    using (Font cellFont = new Font("Jing Jing", (int)(14 * squareSizeX / 35), FontStyle.Regular, GraphicsUnit.Point))
+                                    {
+                                        StringFormat textFormat = new StringFormat();
+                                        textFormat.Alignment = StringAlignment.Center;
+                                        textFormat.LineAlignment = StringAlignment.Center;
+
+                                        this.paintBox.DrawString(grid[i, j].ToString(), cellFont, Brushes.Black, cellRect, textFormat);
+                                    }
+                            }
+                System.Threading.Thread.Sleep(50);
+
+                /**
+                 * if entire row was not filled - stop filling
+                 */
+                if (filledRowCells == 0)
+                    break;
+            }          
+            squareBrush.Dispose();
+            this.paintBox.Dispose();
+        }
+
+        private void calculateButton_Click(object sender, EventArgs e)
+        {          
             this.richTextBox1.Clear();
+            fillButton.Enabled = true;
+            clearButton.Enabled = true;
 
             // TODO: validate input
 
-            int gridSize = Convert.ToInt32(this.textBox1.Text);
-            double probability = Convert.ToDouble(this.textBox2.Text);
+            int gridSize = Convert.ToInt32(this.gridSize.Text);
+            double probability = Convert.ToDouble(this.probability.Text);
 
-            FindClustersAlgorithm findObj = new FindClustersAlgorithm(gridSize, probability);
-            this.PrintGrid(findObj.grid);
+            findObj = new FindClustersAlgorithm(gridSize, probability);         
             findObj.HoshenKopelmanAlgorithm();
-            int totalClusters = findObj.RelabledGrid();       
-            int percolationClusters = this.FindPercolationClusters(findObj);
+            int totalClusters = findObj.RelabledGrid();          
+            this.percolationClusters = findObj.FindPercolationClusters();
+            //this.PrintGrid();
+                    
+            this.richTextBox1.AppendText("\r\nСlusters total: " + totalClusters.ToString());
+            this.richTextBox1.AppendText("\r\nPercolation clusters");
 
-            this.richTextBox1.AppendText("\r\n");
-            this.richTextBox1.AppendText("\r\nTotal found clusters: " + totalClusters.ToString());
-            this.richTextBox1.AppendText("\r\nPercolation found clusters: " + percolationClusters.ToString());          
+            // TODO: try reformat out with {x}
+
+            for (int i = 0; i < this.percolationClusters.Count; i++)
+                if (this.percolationClusters[i] != 0)
+                    this.richTextBox1.AppendText(" #" + this.percolationClusters[i].ToString());
+
+            this.richTextBox1.AppendText(": " + this.percolationClusters.Count.ToString());
+
+            DrawGrid();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void clearButton_Click(object sender, EventArgs e)
         {
             this.richTextBox1.Clear();
-        }
+            this.paintBox = this.pictureBox1.CreateGraphics();
+            this.paintBox.Clear(Color.FromArgb(224, 224, 224));
+            this.paintBox.Dispose();
+            fillButton.Enabled = false;
+            clearButton.Enabled = false;
+        }     
     }
 }

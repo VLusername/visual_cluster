@@ -110,5 +110,19 @@ namespace visual_cluster
 
             return newLabels[0];
         }
+
+        public List<int> FindPercolationClusters()
+        {
+            List<int> foundClusters = new List<int>();
+
+            for (int i = 0; i < this.grid.GetLength(0); i++)
+                for (int j = 0; j < this.grid.GetLength(1); j++)
+                    if (this.grid[0, i] != 0 && !foundClusters.Contains(this.grid[0, i]) && this.grid[0, i] == this.grid[this.grid.GetLength(1) - 1, j])
+                    {
+                        foundClusters.Add(grid[0, i]);
+                        break;
+                    }
+            return foundClusters;
+        }
     }
 }
