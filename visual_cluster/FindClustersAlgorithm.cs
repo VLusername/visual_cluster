@@ -147,15 +147,23 @@ namespace visual_cluster
                             }
                             else
                             {
-                                if (deep != 0 && this.FindRoot(deep) < this.FindRoot(left))
+                                if (deep != 0 && left != 0 && down == 0)
                                 {
                                     this.threeDgrid[i, j, k] = this.Union(deep, left);
+                                }
+                                else if (deep != 0 && down != 0 && left == 0)
+                                {
+                                    this.threeDgrid[i, j, k] = this.Union(deep, down);
+                                }
+                                else if (deep == 0 && down != 0 && left != 0)
+                                {
+                                    this.threeDgrid[i, j, k] = this.Union(down, left);
                                 }
                                 else
                                 {
                                     this.threeDgrid[i, j, k] = this.Union(down, left);
+                                    this.threeDgrid[i, j, k] = this.Union(deep, left);
                                 }
-                                
                             }
                         }
         }

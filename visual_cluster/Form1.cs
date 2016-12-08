@@ -176,11 +176,13 @@ namespace visual_cluster
 
             findObj = new FindClustersAlgorithm(gridSize, probability);         
             findObj.HoshenKopelmanAlgorithm3D();
-            //int totalClusters = findObj.RelabledGrid();          
-            //this.percolationClusters = findObj.FindPercolationClusters();
+            int totalClusters = findObj.RelabledGrid();          
+            this.percolationClusters = findObj.FindPercolationClusters();
+            //findObj.Relabled3DGrid();
+            this.Print3DGrid();
+
             findObj.Relabled3DGrid();
             this.Print3DGrid();
-                    
             //this.richTextBox1.AppendText("\r\nСlusters total: " + totalClusters.ToString());
             //this.richTextBox1.AppendText("\r\nPercolation clusters");
 
