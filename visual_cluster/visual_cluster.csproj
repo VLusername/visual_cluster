@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppendTextExtension.cs" />
+    <Compile Include="FindClustersAlgorithm3D.cs" />
     <Compile Include="FindClustersAlgorithm.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

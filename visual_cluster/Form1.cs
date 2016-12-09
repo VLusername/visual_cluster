@@ -13,7 +13,10 @@ namespace visual_cluster
     public partial class clusterForm : Form
     {
         private Graphics paintBox;
-        private FindClustersAlgorithm findObj;
+
+        private FindClustersAlgorithm findClustersObj;
+        private FindClustersAlgorithm3D findClustersObj3D;
+
         private List<int> percolationClusters;
 
         public clusterForm()
@@ -25,7 +28,7 @@ namespace visual_cluster
 
         public void PrintGrid(string clusterColorMark = "")
         {
-            int[,] grid = this.findObj.grid;
+            int[,] grid = this.findClustersObj.grid;
             this.richTextBox1.AppendText("\r\n");
 
             for (int i = 0; i < grid.GetLength(0); i++)
@@ -50,7 +53,7 @@ namespace visual_cluster
 
         public void Print3DGrid(string clusterColorMark = "")
         {
-            int[,,] grid = this.findObj.threeDgrid;
+            int[,,] grid = this.findClustersObj3D.threeDgrid;
             this.richTextBox1.AppendText("\r\n");
 
             for (int i = 0; i < grid.GetLength(0); i++)
@@ -79,7 +82,7 @@ namespace visual_cluster
 
         private void DrawGrid()
         {
-            int[,] grid = this.findObj.grid;
+            int[,] grid = this.findClustersObj.grid;
 
             SolidBrush squareBrush = new SolidBrush(Color.Black);
             Rectangle cellRect = new Rectangle(0, 0, 0, 0);
@@ -119,7 +122,7 @@ namespace visual_cluster
 
         private void fillButton_Click(object sender, EventArgs e)
         {
-            int[,] grid = this.findObj.grid;
+            int[,] grid = this.findClustersObj.grid;
 
             this.paintBox = this.pictureBox1.CreateGraphics();
             SolidBrush squareBrush = new SolidBrush(Color.CornflowerBlue);
@@ -174,14 +177,18 @@ namespace visual_cluster
             int gridSize = Convert.ToInt32(this.gridSize.Text);
             double probability = Convert.ToDouble(this.probability.Text);
 
-            findObj = new FindClustersAlgorithm(gridSize, probability);         
-            findObj.HoshenKopelmanAlgorithm3D();
-            int totalClusters = findObj.RelabledGrid();          
-            this.percolationClusters = findObj.FindPercolationClusters();
-            //findObj.Relabled3DGrid();
+            //findClustersObj = new FindClustersAlgorithm(gridSize, probability);
+            //findClustersObj.HoshenKopelmanAlgorithm();
+            //int totalClusters = findClustersObj.RelabledGrid();
+            //this.percolationClusters = findClustersObj.FindPercolationClusters();
+            //findClustersObj.RelabledGrid();
+
+            findClustersObj3D = new FindClustersAlgorithm3D(gridSize, probability);         
+            findClustersObj3D.HoshenKopelmanAlgorithm3D();         
+            
             this.Print3DGrid();
 
-            findObj.Relabled3DGrid();
+            findClustersObj3D.Relabled3DGrid();
             this.Print3DGrid();
             //this.richTextBox1.AppendText("\r\nСlusters total: " + totalClusters.ToString());
             //this.richTextBox1.AppendText("\r\nPercolation clusters");

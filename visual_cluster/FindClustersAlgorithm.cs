@@ -10,42 +10,12 @@ namespace visual_cluster
     public class FindClustersAlgorithm
     {
         public int[,] grid;
-        public int[,,] threeDgrid;
         public int[] labels;
         public int totalClusters = 0;
 
         public FindClustersAlgorithm(int size, double probability)
         {
             this.grid = new int[size, size];
-
-            this.threeDgrid = new int[,,]
-            {
-                {
-                    {1, 1, 0, 1},
-                    {0, 1, 0, 0},
-                    {1, 0, 1, 1},
-                    {1, 1, 0, 1}
-                },
-                {
-                    {1, 0, 1, 0},
-                    {1, 0, 0, 1},
-                    {0, 1, 0, 0},
-                    {1, 0, 1, 1}
-                },
-                {
-                    {1, 1, 1, 0},
-                    {0, 0, 1, 1},
-                    {0, 0, 0, 1},
-                    {1, 0, 1, 0}
-                },
-                {
-                    {0, 1, 0, 1},
-                    {1, 0, 0, 0},
-                    {0, 1, 0, 1},
-                    {0, 1, 0, 0}
-                }
-            };
-
             this.labels = new int[size * size / 2];
 
             Random randObj = new Random();
@@ -119,74 +89,6 @@ namespace visual_cluster
                             this.grid[i, j] = this.Union(up, left);
                         }
                     }
-        }
-
-        /**
-         * HK algorithm for 3-dimension grid
-         */
-        public void HoshenKopelmanAlgorithm3D()
-        {
-            for (int i = 0; i < this.threeDgrid.GetLength(0); i++)
-                for (int j = this.threeDgrid.GetLength(1) - 1; j >= 0; j--)
-                    for (int k = 0; k < this.threeDgrid.GetLength(2); k++)
-                        if (this.threeDgrid[i, j, k] != 0)
-                        {
-                            int deep = (i == 0 ? 0 : this.threeDgrid[i - 1, j, k]);
-                            int down = (j == (this.threeDgrid.GetLength(1) - 1) ? 0 : this.threeDgrid[i, j + 1, k]);
-                            int left = (k == 0 ? 0 : this.threeDgrid[i, j, k - 1]);
-
-                            if (left == 0 && down == 0 && deep == 0)
-                            {
-                                this.threeDgrid[i, j, k] = this.SetNewCluster();
-                            }
-                            else if (left != 0 && down == 0 && deep == 0 ||
-                                     left == 0 && down != 0 && deep == 0 ||
-                                     left == 0 && down == 0 && deep != 0)
-                            {
-                                this.threeDgrid[i, j, k] = Math.Max(deep, Math.Max(left, down));
-                            }
-                            else
-                            {
-                                if (deep != 0 && left != 0 && down == 0)
-                                {
-                                    this.threeDgrid[i, j, k] = this.Union(deep, left);
-                                }
-                                else if (deep != 0 && down != 0 && left == 0)
-                                {
-                                    this.threeDgrid[i, j, k] = this.Union(deep, down);
-                                }
-                                else if (deep == 0 && down != 0 && left != 0)
-                                {
-                                    this.threeDgrid[i, j, k] = this.Union(down, left);
-                                }
-                                else
-                                {
-                                    this.threeDgrid[i, j, k] = this.Union(down, left);
-                                    this.threeDgrid[i, j, k] = this.Union(deep, left);
-                                }
-                            }
-                        }
-        }
-
-        public int Relabled3DGrid()
-        {
-            int[] newLabels = new int[this.labels.Length];
-
-            for (int i = 0; i < this.threeDgrid.GetLength(0); i++)
-                for (int j = this.threeDgrid.GetLength(1) - 1; j >= 0; j--)
-                    for (int k = 0; k < this.threeDgrid.GetLength(2); k++)
-                        if (this.threeDgrid[i, j, k] != 0)
-                        {
-                            int x = this.FindRoot(this.threeDgrid[i, j, k]);
-                            if (newLabels[x] == 0)
-                            {
-                                newLabels[0]++;
-                                newLabels[x] = newLabels[0];
-                            }
-                            this.threeDgrid[i, j, k] = newLabels[x];
-                        }
-
-            return newLabels[0];
         }
 
         public int RelabledGrid()
