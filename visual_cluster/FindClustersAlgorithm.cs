@@ -20,18 +20,18 @@ namespace visual_cluster
 
             Random randObj = new Random();
 
-            //this.grid = new int[,]
-            //{
-            //    {1, 1, 1, 0, 1},
-            //    {0, 1, 0, 0, 1},
-            //    {1, 1, 0, 1, 1},
-            //    {0, 0, 1, 1, 0},
-            //    {0, 1, 1, 0, 1}
-            //};
+            this.grid = new int[,]
+            {
+                {1, 1, 1, 0, 1},
+                {0, 1, 0, 0, 1},
+                {1, 1, 0, 1, 1},
+                {0, 0, 1, 1, 0},
+                {0, 1, 1, 0, 1}
+            };
 
-            for (int i = 0; i < this.grid.GetLength(0); i++)
-                for (int j = 0; j < this.grid.GetLength(1); j++)
-                    this.grid[i, j] = (randObj.NextDouble() < probability) ? 1 : 0;
+            //for (int i = 0; i < this.grid.GetLength(0); i++)
+            //    for (int j = 0; j < this.grid.GetLength(1); j++)
+            //        this.grid[i, j] = (randObj.NextDouble() < probability) ? 1 : 0;
         }
 
         public int SetNewCluster()
@@ -64,7 +64,7 @@ namespace visual_cluster
                 return this.labels[yRoot] = xRoot;
             }*/
 
-            return this.labels[yRoot] = xRoot;         
+            return this.labels[xRoot] = yRoot;         
         }
 
         public void HoshenKopelmanAlgorithm()
@@ -91,24 +91,23 @@ namespace visual_cluster
                     }
         }
 
-        public int RelabledGrid()
+        public List<int> RelabledGrid()
         {
-            int[] newLabels = new int[this.labels.Length];
+            List<int> newLabels = new List<int>();
 
             for (int i = 0; i < this.grid.GetLength(0); i++)
                 for (int j = 0; j < this.grid.GetLength(1); j++)
                     if (this.grid[i, j] != 0)
                     {
                         int x = this.FindRoot(this.grid[i, j]);
-                        if (newLabels[x] == 0)
+                        if (!newLabels.Contains(x))
                         {
-                            newLabels[0]++;
-                            newLabels[x] = newLabels[0];
+                            newLabels.Add(x);
                         }
-                        this.grid[i, j] = newLabels[x];
+                        this.grid[i, j] = x;
                     }
 
-            return newLabels[0];
+            return newLabels;
         }
 
         public List<int> FindPercolationClusters()
