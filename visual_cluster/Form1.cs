@@ -178,33 +178,38 @@ namespace visual_cluster
             int gridSize = Convert.ToInt32(this.gridSize.Text);
             double probability = Convert.ToDouble(this.probability.Text);
 
-            findClustersObj = new FindClustersAlgorithm(gridSize, probability);
-            findClustersObj.HoshenKopelmanAlgorithm();
+            //findClustersObj = new FindClustersAlgorithm(gridSize, probability);
+            //findClustersObj.HoshenKopelmanAlgorithm();
 
-            this.PrintGrid();
+            //this.PrintGrid();
 
-            this.allClusters = findClustersObj.RelabledGrid();
-            this.percolationClusters = findClustersObj.FindPercolationClusters();
+            //this.allClusters = findClustersObj.RelabledGrid();
+            //this.percolationClusters = findClustersObj.FindPercolationClusters();
 
-            this.PrintGrid();
-            this.richTextBox1.AppendText("\r\nСlusters total: " + allClusters.Count.ToString());
-            this.richTextBox1.AppendText("\r\nPercolation clusters");
+            //this.PrintGrid();
 
-            //findClustersObj3D = new FindClustersAlgorithm3D(gridSize, probability);         
-            //findClustersObj3D.HoshenKopelmanAlgorithm3D();                
-            //this.Print3DGrid();
-            //findClustersObj3D.Relabled3DGrid();
-            //this.Print3DGrid();
+            //this.richTextBox1.AppendText("\r\nСlusters total: " + allClusters.Count.ToString());
+            //this.richTextBox1.AppendText("\r\nPercolation clusters");
+            //for (int i = 0; i < this.percolationClusters.Count; i++)
+            //    if (this.percolationClusters[i] != 0)
+            //        this.richTextBox1.AppendText(" #" + this.percolationClusters[i].ToString());
 
-            // TODO: try reformat out with {x}
+            //this.richTextBox1.AppendText(": " + this.percolationClusters.Count.ToString());
+            //DrawGrid();
 
-            for (int i = 0; i < this.percolationClusters.Count; i++)
-                if (this.percolationClusters[i] != 0)
-                    this.richTextBox1.AppendText(" #" + this.percolationClusters[i].ToString());
+            findClustersObj3D = new FindClustersAlgorithm3D(gridSize, probability);
+            findClustersObj3D.HoshenKopelmanAlgorithm3D();
+            int allClusters = findClustersObj3D.Relabled3DGrid();
+            this.Print3DGrid();
+            this.richTextBox1.AppendText("\r\nAll clusters count: " + allClusters.ToString());
 
-            this.richTextBox1.AppendText(": " + this.percolationClusters.Count.ToString());
 
-            DrawGrid();
+            findClustersObj3D = new FindClustersAlgorithm3D(gridSize, probability);
+            findClustersObj3D.HoshenKopelmanAlgorithm3DTest();
+            allClusters = findClustersObj3D.Relabled3DGrid();
+            this.Print3DGrid();
+            this.richTextBox1.AppendText("\r\nAll clusters count: " + allClusters.ToString());
+
         }
 
         private void clearButton_Click(object sender, EventArgs e)

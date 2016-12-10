@@ -80,9 +80,7 @@ namespace visual_cluster
             return this.labels[secondRoot] = firstRoot;         
         }      
 
-        /**
-         * HK algorithm for 3-dimension grid
-         */
+        // HK algorithm for 3-dimension grid
         public void HoshenKopelmanAlgorithm3D()
         {
             for (int i = 0; i < this.threeDgrid.GetLength(0); i++)
@@ -121,6 +119,51 @@ namespace visual_cluster
                                 else
                                 {
                                     this.threeDgrid[i, j, k] = this.Union(down, left);
+                                    this.threeDgrid[i, j, k] = this.Union(deep, left);
+                                }
+                            }
+                        }
+        }
+
+        // TEST
+        public void HoshenKopelmanAlgorithm3DTest()
+        {
+            for (int i = 0; i < this.threeDgrid.GetLength(0); i++)
+                for (int j = 0; j < this.threeDgrid.GetLength(1); j++)
+                    for (int k = 0; k < this.threeDgrid.GetLength(2); k++)
+                        if (this.threeDgrid[i, j, k] != 0)
+                        {
+                            int deep = (i == 0 ? 0 : this.threeDgrid[i - 1, j, k]);
+                            int up = (j == 0 ? 0 : this.threeDgrid[i, j - 1, k]);
+                            int left = (k == 0 ? 0 : this.threeDgrid[i, j, k - 1]);
+
+                            if (left == 0 && up == 0 && deep == 0)
+                            {
+                                this.threeDgrid[i, j, k] = this.SetNewCluster();
+                            }
+                            else if (left != 0 && up == 0 && deep == 0 ||
+                                     left == 0 && up != 0 && deep == 0 ||
+                                     left == 0 && up == 0 && deep != 0)
+                            {
+                                this.threeDgrid[i, j, k] = Math.Max(deep, Math.Max(left, up));
+                            }
+                            else
+                            {
+                                if (deep != 0 && left != 0 && up == 0)
+                                {
+                                    this.threeDgrid[i, j, k] = this.Union(deep, left);
+                                }
+                                else if (deep != 0 && up != 0 && left == 0)
+                                {
+                                    this.threeDgrid[i, j, k] = this.Union(deep, up);
+                                }
+                                else if (deep == 0 && up != 0 && left != 0)
+                                {
+                                    this.threeDgrid[i, j, k] = this.Union(up, left);
+                                }
+                                else
+                                {
+                                    this.threeDgrid[i, j, k] = this.Union(up, left);
                                     this.threeDgrid[i, j, k] = this.Union(deep, left);
                                 }
                             }
